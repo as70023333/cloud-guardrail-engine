@@ -1,0 +1,310 @@
+---
+# ConfigMap for Zero-Trust Quarantine Engine Configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zero-trust-quarantine-config
+  namespace: security
+  labels:
+    app: zero-trust-quarantine
+    component: engine
+data:
+  API_HOST: "0.0.0.0"
+  API_PORT: "8080"
+  LOG_LEVEL: "INFO"
+  AWS_REGION: "us-east-1"
+  AZURE_TENANT_ID: "your-tenant-id-here"
+  AZURE_CLIENT_ID: "your-client-id-here"
+
+---
+# Secret for sensitive credentials
+apiVersion: v1
+kind: Secret
+metadata:
+  name: zero-trust-quarantine-secrets
+  namespace: security
+  labels:
+    app: zero-trust-quarantine
+    component: engine
+type: Opaque
+stringData:
+  QUARANTINE_API_SECRET: "your-super-secret-api-token"
+  AWS_ACCESS_KEY_ID: "your-aws-access-key"
+  AWS_SECRET_ACCESS_KEY: "your-aws-secret-key"
+  AZURE_CLIENT_SECRET: "your-azure-client-secret"
+
+---
+# Deployment for Zero-Trust Quarantine Engine
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zero-trust-quarantine
+  namespace: security
+  labels:
+    app: zero-trust-quarantine
+    component: engine
+    version: v1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: zero-trust-quarantine
+      component: engine
+  template:
+    metadata:
+      labels:
+        app: zero-trust-quarantine
+        component: engine
+        version: v1
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+    spec:
+      # Security context at pod level
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+      
+      # Service account for RBAC (optional)
+      serviceAccountName: default
+      automountServiceAccountToken: false
+      
+      containers:
+      - name: quarantine-engine
+        image: your-registry/zero-trust-quarantine:1.0.0
+        imagePullPolicy: Always
+        
+        # Container security context
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          runAsNonRoot: true
+          runAsUser: 10001
+        
+        # Port configuration
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        
+        # Environment variables from ConfigMap and Secret
+        envFrom:
+        - configMapRef:
+            name: zero-trust-quarantine-config
+        - secretRef:
+            name: zero-trust-quarantine-secrets
+        
+        # Resource limits and requests
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        
+        # Readiness probe - checks if the application is ready to serve traffic
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        
+        # Liveness probe - checks if the application is running
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 15
+          periodSeconds: 20
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        
+        # Startup probe - ensures the application has started
+        startupProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 30
+        
+        # Volume mounts for temporary files and logs
+        volumeMounts:
+        - name: tmp-volume
+          mountPath: /tmp
+        - name: logs-volume
+          mountPath: /app/logs
+      
+      # Volumes for writable directories
+      volumes:
+      - name: tmp-volume
+        emptyDir:
+          sizeLimit: 100Mi
+      - name: logs-volume
+        emptyDir:
+          sizeLimit: 500Mi
+      
+      # Image pull secrets (if using private registry)
+      # imagePullSecrets:
+      # - name: registry-credentials
+      
+      # Node selector (optional)
+      # nodeSelector:
+      #   kubernetes.io/os: linux
+      
+      # Tolerations (optional)
+      # tolerations:
+      # - key: "security"
+      #   operator: "Equal"
+      #   value: "high"
+      #   effect: "NoSchedule"
+
+---
+# Service to expose the Zero-Trust Quarantine Engine
+apiVersion: v1
+kind: Service
+metadata:
+  name: zero-trust-quarantine
+  namespace: security
+  labels:
+    app: zero-trust-quarantine
+    component: engine
+spec:
+  type: ClusterIP
+  selector:
+    app: zero-trust-quarantine
+    component: engine
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+    protocol: TCP
+
+---
+# Horizontal Pod Autoscaler (optional)
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: zero-trust-quarantine-hpa
+  namespace: security
+  labels:
+    app: zero-trust-quarantine
+    component: engine
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: zero-trust-quarantine
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 60
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 10
+        periodSeconds: 60
+
+---
+# Network Policy to restrict traffic (optional but recommended)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: zero-trust-quarantine-network-policy
+  namespace: security
+  labels:
+    app: zero-trust-quarantine
+    component: engine
+spec:
+  podSelector:
+    matchLabels:
+      app: zero-trust-quarantine
+      component: engine
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Allow traffic from ingress controllers and monitoring
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+    - namespaceSelector:
+        matchLabels:
+          name: monitoring
+    ports:
+    - protocol: TCP
+      port: 8080
+  egress:
+  # Allow DNS resolution
+  - to:
+    - namespaceSelector: {}
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
+  # Allow HTTPS traffic to AWS and Azure APIs
+  - to:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+        except:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/16
+    ports:
+    - protocol: TCP
+      port: 443
+
+---
+# Pod Disruption Budget to ensure availability during updates
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: zero-trust-quarantine-pdb
+  namespace: security
+  labels:
+    app: zero-trust-quarantine
+    component: engine
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: zero-trust-quarantine
+      component: engine
