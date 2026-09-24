@@ -3,8 +3,8 @@ package cloud.guardrail.azure_test
 import future.keywords.in
 import data.cloud.guardrail.azure
 
-# Test Case 1: Storage account with HTTPS disabled MUST trigger a deny violation
-test_deny_insecure_storage_account {
+# Test Case 1: Storage account without HTTPS enforced MUST trigger a violation
+test_deny_http_azure_storage {
     mock_plan := {
         "resource_changes": [{
             "name": "insecure_storage",
@@ -12,7 +12,7 @@ test_deny_insecure_storage_account {
             "change": {
                 "actions": ["create"],
                 "after": {
-                    "name": "stmulticloudprod01",
+                    "name": "sttest01",
                     "enable_https_traffic_only": false
                 }
             }
@@ -23,8 +23,8 @@ test_deny_insecure_storage_account {
     count(res) == 1
 }
 
-# Test Case 2: Storage account with HTTPS enabled and TLS 1.2 MUST pass validation
-test_allow_secure_storage_account {
+# Test Case 2: Storage account enforcing HTTPS MUST pass
+test_allow_https_azure_storage {
     mock_plan := {
         "resource_changes": [{
             "name": "secure_storage",
@@ -32,9 +32,8 @@ test_allow_secure_storage_account {
             "change": {
                 "actions": ["create"],
                 "after": {
-                    "name": "stsecureprod01",
-                    "enable_https_traffic_only": true,
-                    "min_tls_version": "TLS1_2"
+                    "name": "sttest01",
+                    "enable_https_traffic_only": true
                 }
             }
         }]
