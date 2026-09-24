@@ -78,11 +78,7 @@ test-policies:
 ## run: Run the guardrail engine against mock data
 run: build
 	@echo "🚀 Running guardrail engine..."
-	$(BUILD_DIR)/$(BINARY_NAME) --policies $(POLICIES_DIR) --plan $(TESTS_DIR)/mock_tfplan.json
-
-## run-json: Run and output JSON results
-run-json: build
-	$(BUILD_DIR)/$(BINARY_NAME) --policies $(POLICIES_DIR) --plan $(TESTS_DIR)/mock_tfplan.json --json
+	$(BUILD_DIR)/$(BINARY_NAME) -policies $(POLICIES_DIR) -plan $(TESTS_DIR)/mock_tfplan.json
 
 ## install-deps: Install development dependencies
 install-deps:
