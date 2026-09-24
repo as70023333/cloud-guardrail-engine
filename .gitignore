@@ -1,5 +1,74 @@
+# Dependencies
 node_modules/
-.next/
+venv/
+.venv/
+env/
+ENV/
+
+# Build outputs
 dist/
 build/
+bin/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test coverage
+coverage/
+coverage.out
+coverage.html
+*.cover
+.hypothesis/
+.pytest_cache/
+.tox/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
 *.log
+logs/
+
+# Docker
+.dockerignore
+
+# Kubernetes
+*.kubeconfig
+
+# Go
+vendor/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Secrets
+*.pem
+*.key
+credentials.json
+service-account.json
+
+# OS
+Thumbs.db
+.next/
