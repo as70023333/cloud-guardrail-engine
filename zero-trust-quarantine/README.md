@@ -126,20 +126,46 @@ Health check endpoint for monitoring and load balancers.
 
 ## 🛡️ Security Features
 
-### AWS Quarantine Actions
+### AWS STS Session Revocation
 
-When an IAM role is quarantined:
-1. **Policy Detachment**: All managed policies are detached from the role
-2. **Inline Policy Removal**: All inline policies are deleted
-3. **Trust Policy Update**: Role trust policy is updated to deny all `sts:AssumeRole` actions
-4. **Session Invalidation**: Active sessions are effectively invalidated
+When an IAM role is quarantined, the AWS provider attaches an inline boundary policy that invalidates all existing temporary STS credentials:
 
-### Azure Entra ID Quarantine Actions
+1. **Token Issue Time Check**: Creates a timestamp-based deny policy using `aws:TokenIssueTime` condition
+2. **Dynamic Policy Naming**: Each quarantine creates a uniquely-named policy with timestamp (e.g., `Quarantine-RevokeOlderSessions-1705312800`)
+3. **Immediate Effect**: All STS sessions issued before the quarantine timestamp are instantly denied
+4. **No Session Tracking Required**: Leverages AWS IAM's built-in token validation without needing to track individual sessions
 
-When a user is quarantined:
-1. **Session Revocation**: All active sessions are revoked via Microsoft Graph API
-2. **Token Invalidation**: All refresh tokens are invalidated
-3. **Forced Re-authentication**: User must re-authenticate on next access
+**Policy Structure:**
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Sid": "RevokeOlderSessions",
+    "Effect": "Deny",
+    "Action": "*",
+    "Resource": "*",
+    "Condition": {
+      "DateLessThan": {
+        "aws:TokenIssueTime": "2024-01-15T10:30:00Z"
+      }
+    }
+  }]
+}
+```
+
+### Azure Entra ID Session Revocation
+
+When a user is quarantined, the Azure provider performs two critical actions:
+
+1. **Refresh Token Revocation**: Calls Microsoft Graph API's `revokeSignInSessions` endpoint to invalidate all active OAuth refresh tokens
+2. **Account Disable**: Sets `accountEnabled = false` to prevent any new sign-ins
+3. **Immediate Effect**: Existing sessions lose their ability to refresh tokens, forcing re-authentication
+4. **Comprehensive Coverage**: Revokes tokens across all Microsoft 365 services (Teams, SharePoint, Exchange, etc.)
+
+**Authentication Methods:**
+- Managed Identity (recommended for Azure-hosted deployments)
+- Azure CLI credentials (for local development)
+- Service Principal via environment variables (for CI/CD)
 
 ## 📊 Integration Examples
 
@@ -212,6 +238,32 @@ async def siem_webhook(alert: dict):
 ```
 
 ## 🧪 Testing
+
+### Test Execution & Usage
+
+Start the server locally:
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run FastAPI server
+QUARANTINE_API_SECRET="test-secret-123" uvicorn main:app --reload --port 8080
+```
+
+Trigger a sample identity quarantine request via curl:
+
+```bash
+curl -X POST http://localhost:8080/api/v1/quarantine \
+  -H "Content-Type: application/json" \
+  -H "X-API-Token: test-secret-123" \
+  -d '{
+    "user_principal_name": "compromised.user@company.com",
+    "aws_iam_role_name": "Developer-PowerUser-Role",
+    "reason": "Anomalous login location & impossible travel detected",
+    "risk_score": 0.95
+  }'
+```
 
 ### Run Test Payloads
 
