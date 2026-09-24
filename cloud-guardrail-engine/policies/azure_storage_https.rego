@@ -16,7 +16,7 @@ deny[reason] {
     # Validation logic: Ensure HTTPS-only traffic is enforced
     resource.change.after.enable_https_traffic_only != true
     
-    reason := sprintf("Azure Storage account '%v' must enforce HTTPS-only traffic (enable_https_traffic_only = true).", [resource.name])
+    reason := sprintf("Azure Storage Account '%v' must enforce HTTPS traffic only.", [resource.name])
 }
 
 deny[reason] {
