@@ -15,11 +15,10 @@ import (
 
 // PolicyResult represents the evaluation result of a single policy
 type PolicyResult struct {
-	Policy    string `json:"policy"`
-	Resource  string `json:"resource"`
-	Passed    bool   `json:"passed"`
-	Message   string `json:"message,omitempty"`
-	Severity  string `json:"severity"`
+	Policy   string `json:"policy"`
+	Package  string `json:"package"`
+	Passed   bool   `json:"passed"`
+	Denials  []string `json:"denials,omitempty"`
 }
 
 // EvaluationReport holds the complete evaluation results
@@ -98,121 +97,141 @@ func evaluatePolicies(policyDir string, input map[string]interface{}) (*Evaluati
 	ctx := context.Background()
 	report := &EvaluationReport{}
 
-	// Walk policy directory
+	// Collect all .rego files
+	var policyFiles []string
 	err := filepath.Walk(policyDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
-		if info.IsDir() || !strings.HasSuffix(info.Name(), ".rego") {
-			return nil
+		if !info.IsDir() && strings.HasSuffix(info.Name(), ".rego") {
+			policyFiles = append(policyFiles, path)
 		}
-
-		// Read policy file
-		policyContent, err := os.ReadFile(path)
-		if err != nil {
-			return fmt.Errorf("failed to read policy %s: %w", path, err)
-		}
-
-		// Parse and compile the policy
-		compiler, err := ast.CompileModules(map[string]string{
-			path: string(policyContent),
-		})
-		if err != nil {
-			return fmt.Errorf("failed to compile policy %s: %w", path, err)
-		}
-
-		// Evaluate the policy against the input
-		regoQuery := rego.New(
-			rego.Query("data"),
-			rego.Compiler(compiler),
-			rego.Input(input),
-		)
-
-		rs, err := regoQuery.Eval(ctx)
-		if err != nil {
-			return fmt.Errorf("failed to evaluate policy %s: %w", path, err)
-		}
-
-		// Process results
-		results := processResults(path, rs)
-		report.Results = append(report.Results, results...)
-		report.TotalPolicies++
-
 		return nil
 	})
-
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to walk policy directory: %w", err)
 	}
 
-	// Count passed/failed
-	for _, r := range report.Results {
-		if r.Passed {
-			report.Passed++
-		} else {
-			report.Failed++
+	if len(policyFiles) == 0 {
+		return nil, fmt.Errorf("no .rego policy files found in %s", policyDir)
+	}
+
+	// Load all policies into a single compiler
+	modules := make(map[string]string)
+	for _, pf := range policyFiles {
+		content, err := os.ReadFile(pf)
+		if err != nil {
+			return nil, fmt.Errorf("failed to read policy %s: %w", pf, err)
+		}
+		modules[pf] = string(content)
+	}
+
+	compiler, err := ast.CompileModules(modules)
+	if err != nil {
+		return nil, fmt.Errorf("failed to compile policies: %w", err)
+	}
+
+	// Evaluate all policies against the input
+	regoQuery := rego.New(
+		rego.Query("data"),
+		rego.Compiler(compiler),
+		rego.Input(input),
+	)
+
+	rs, err := regoQuery.Eval(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to evaluate policies: %w", err)
+	}
+
+	// Process results from each package
+	for _, result := range rs {
+		for _, expr := range result.Expressions {
+			if data, ok := expr.Value.(map[string]interface{}); ok {
+				// Navigate into nested packages (e.g., cloud -> guardrail -> aws)
+				processPackageResults(data, "", report)
+			}
 		}
 	}
 
 	return report, nil
 }
 
-func processResults(policyPath string, rs rego.ResultSet) []PolicyResult {
-	var results []PolicyResult
+func processPackageResults(data map[string]interface{}, prefix string, report *EvaluationReport) {
+	for key, value := range data {
+		fullKey := key
+		if prefix != "" {
+			fullKey = prefix + "." + key
+		}
 
-	for _, result := range rs {
-		for _, expr := range result.Expressions {
-			if data, ok := expr.Value.(map[string]interface{}); ok {
-				if violations, exists := data["violation"]; exists {
-					if violationList, ok := violations.([]interface{}); ok {
-						for _, v := range violationList {
-							if vMap, ok := v.(map[string]interface{}); ok {
-								results = append(results, PolicyResult{
-									Policy:   filepath.Base(policyPath),
-									Resource: fmt.Sprintf("%v", vMap["resource"]),
-									Passed:   false,
-									Message:  fmt.Sprintf("%v", vMap["msg"]),
-									Severity: fmt.Sprintf("%v", vMap["severity"]),
-								})
-							}
-						}
-					}
+		switch v := value.(type) {
+		case map[string]interface{}:
+			// Check if this is a package with deny/allow rules
+			if _, hasDeny := v["deny"]; hasDeny {
+				result := processPolicyResult(key, fullKey, v)
+				report.Results = append(report.Results, result)
+				report.TotalPolicies++
+				if result.Passed {
+					report.Passed++
+				} else {
+					report.Failed++
+				}
+			} else {
+				// Recurse into nested packages
+				processPackageResults(v, fullKey, report)
+			}
+		}
+	}
+}
+
+func processPolicyResult(name string, pkg string, data map[string]interface{}) PolicyResult {
+	result := PolicyResult{
+		Policy:  name,
+		Package: pkg,
+		Passed:  true,
+	}
+
+	// Check for deny set
+	if denyVal, exists := data["deny"]; exists {
+		if denySet, ok := denyVal.([]interface{}); ok {
+			for _, d := range denySet {
+				if reason, ok := d.(string); ok {
+					result.Denials = append(result.Denials, reason)
+					result.Passed = false
 				}
 			}
 		}
 	}
 
-	// If no violations found, policy passed
-	if len(results) == 0 {
-		results = append(results, PolicyResult{
-			Policy:  filepath.Base(policyPath),
-			Passed:  true,
-			Message: "All resources compliant",
-		})
+	// Also check allow
+	if allowVal, exists := data["allow"]; exists {
+		if allowed, ok := allowVal.(bool); ok && allowed {
+			result.Passed = true
+			result.Denials = nil
+		}
 	}
 
-	return results
+	return result
 }
 
 func printReport(report *EvaluationReport) {
-	fmt.Println("╔══════════════════════════════════════════════════════════╗")
-	fmt.Println("║         Cloud Guardrail Engine - Evaluation Report      ║")
-	fmt.Println("╠══════════════════════════════════════════════════════════╣")
-	fmt.Printf("║  Total Policies: %-3d                                   ║\n", report.TotalPolicies)
-	fmt.Printf("║  Passed:         %-3d                                   ║\n", report.Passed)
-	fmt.Printf("║  Failed:         %-3d                                   ║\n", report.Failed)
-	fmt.Println("╠══════════════════════════════════════════════════════════╣")
+	fmt.Println("╔══════════════════════════════════════════════════════════════╗")
+	fmt.Println("║          Cloud Guardrail Engine - Evaluation Report         ║")
+	fmt.Println("╠══════════════════════════════════════════════════════════════╣")
+	fmt.Printf("║  Total Policies: %-3d                                        ║\n", report.TotalPolicies)
+	fmt.Printf("║  Passed:         %-3d                                        ║\n", report.Passed)
+	fmt.Printf("║  Failed:         %-3d                                        ║\n", report.Failed)
+	fmt.Println("╠══════════════════════════════════════════════════════════════╣")
 
 	for _, r := range report.Results {
 		status := "✅ PASS"
 		if !r.Passed {
 			status = "❌ FAIL"
 		}
-		fmt.Printf("║  %s  %-20s %-25s ║\n", status, r.Policy, r.Resource)
-		if r.Message != "" && !r.Passed {
-			fmt.Printf("║         └─ %s (Severity: %s)\n", r.Message, r.Severity)
+		fmt.Printf("║  %s  %-40s ║\n", status, r.Package)
+		for _, d := range r.Denials {
+			fmt.Printf("║         └─ %s\n", d)
 		}
 	}
 
-	fmt.Println("╚══════════════════════════════════════════════════════════╝")
+	fmt.Println("╚══════════════════════════════════════════════════════════════╝")
 }
