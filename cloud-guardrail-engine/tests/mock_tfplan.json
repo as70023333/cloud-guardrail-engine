@@ -1,0 +1,26 @@
+{
+  "format_version": "1.0",
+  "resource_changes": [
+    {
+      "name": "unencrypted_bucket",
+      "type": "aws_s3_bucket",
+      "change": {
+        "actions": ["create"],
+        "after": {
+          "bucket": "my-sensitive-data-bucket"
+        }
+      }
+    },
+    {
+      "name": "insecure_storage",
+      "type": "azurerm_storage_account",
+      "change": {
+        "actions": ["create"],
+        "after": {
+          "name": "stmulticloudprod01",
+          "enable_https_traffic_only": false
+        }
+      }
+    }
+  ]
+}

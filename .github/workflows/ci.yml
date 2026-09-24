@@ -1,0 +1,102 @@
+name: Multi-Cloud Guardrail CI & Security Matrix
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # Stage 1: OPA Policy Testing & Linting
+  policy-tests:
+    name: OPA Rego Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup OPA CLI
+        uses: open-policy-agent/setup-opa@v2
+        with:
+          version: latest
+
+      - name: Run OPA Rego Unit Tests
+        working-directory: cloud-guardrail-engine
+        run: opa test ./policies -v --explain fails
+
+  # Stage 2: Go Build & Dependency Vulnerability Scanning
+  code-security:
+    name: Go Build & SAST Scanning
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          cache: true
+
+      - name: Install Dependencies
+        working-directory: cloud-guardrail-engine
+        run: go mod download
+
+      - name: Build Engine Binary
+        working-directory: cloud-guardrail-engine
+        run: go build -v -o cloud-guardrail main.go
+
+      - name: Run Go Vulnerability Check (govulncheck)
+        uses: golang/govulncheck-action@v1
+        with:
+          go-version-input: '1.22'
+          check-package: './...'
+          working-directory: cloud-guardrail-engine
+
+  # Stage 3: Secret Detection & Static IaC Analysis
+  security-matrix:
+    name: Secret & Policy Static Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Secret Scanning (TruffleHog)
+        uses: trufflesecurity/trufflehog-actions-scan@main
+        with:
+          extra_args: --only-verified
+
+      - name: Static Security Scan (Trivy Repository Scan)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
+
+  # Stage 4: Integration Test against Mock Plan
+  integration-test:
+    name: End-to-End Mock Plan Verification
+    needs: [policy-tests, code-security]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Build Engine
+        working-directory: cloud-guardrail-engine
+        run: go build -o cloud-guardrail main.go
+
+      - name: Execute Engine against Mock Plan (Expecting Non-Zero Exit Code)
+        working-directory: cloud-guardrail-engine
+        run: |
+          ./cloud-guardrail -plan ./tests/mock_tfplan.json -policies ./policies > output.json || true
+          cat output.json
+          grep -q '"compliant": false' output.json || (echo "FAILED: Engine failed to report violations" && exit 1)
