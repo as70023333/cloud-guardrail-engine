@@ -1,202 +1,26 @@
 {
-  "format_version": "1.2",
-  "terraform_version": "1.6.0",
-  "planned_values": {
-    "root_module": {
-      "resources": [
-        {
-          "address": "aws_s3_bucket.data_bucket",
-          "mode": "managed",
-          "type": "aws_s3_bucket",
-          "name": "data_bucket",
-          "provider_name": "registry.terraform.io/hashicorp/aws",
-          "schema_version": 0,
-          "values": {
-            "bucket": "my-app-data-bucket",
-            "tags": {
-              "Environment": "production",
-              "Team": "platform"
-            }
-          }
-        },
-        {
-          "address": "azurerm_storage_account.logs",
-          "mode": "managed",
-          "type": "azurerm_storage_account",
-          "name": "logs",
-          "provider_name": "registry.terraform.io/hashicorp/azurerm",
-          "schema_version": 0,
-          "values": {
-            "name": "applogsstorage",
-            "resource_group_name": "rg-production",
-            "location": "eastus",
-            "account_tier": "Standard",
-            "account_replication_type": "LRS"
-          }
-        }
-      ]
-    }
-  },
+  "format_version": "1.0",
   "resource_changes": [
     {
-      "address": "aws_s3_bucket.data_bucket",
-      "mode": "managed",
+      "name": "unencrypted_bucket",
       "type": "aws_s3_bucket",
-      "name": "data_bucket",
-      "provider_name": "registry.terraform.io/hashicorp/aws",
       "change": {
         "actions": ["create"],
-        "before": null,
         "after": {
-          "bucket": "my-app-data-bucket",
-          "tags": {
-            "Environment": "production",
-            "Team": "platform"
-          },
-          "server_side_encryption_configuration": null,
-          "public_access_block": null,
-          "versioning": [
-            {
-              "enabled": false
-            }
-          ]
-        },
-        "after_unknown": {}
-      }
-    },
-    {
-      "address": "aws_s3_bucket.secure_bucket",
-      "mode": "managed",
-      "type": "aws_s3_bucket",
-      "name": "secure_bucket",
-      "provider_name": "registry.terraform.io/hashicorp/aws",
-      "change": {
-        "actions": ["create"],
-        "before": null,
-        "after": {
-          "bucket": "my-secure-bucket",
-          "tags": {
-            "Environment": "production",
-            "Team": "security"
-          },
-          "server_side_encryption_configuration": [
-            {
-              "rule": [
-                {
-                  "apply_server_side_encryption_by_default": [
-                    {
-                      "sse_algorithm": "aws:kms",
-                      "kms_master_key_id": "arn:aws:kms:us-east-1:123456789012:key/abcd-1234"
-                    }
-                  ]
-                }
-              ]
-            }
-          ],
-          "public_access_block": [
-            {
-              "block_public_acls": true,
-              "block_public_policy": true,
-              "ignore_public_acls": true,
-              "restrict_public_buckets": true
-            }
-          ],
-          "versioning": [
-            {
-              "enabled": true
-            }
-          ]
-        },
-        "after_unknown": {}
-      }
-    },
-    {
-      "address": "azurerm_storage_account.logs",
-      "mode": "managed",
-      "type": "azurerm_storage_account",
-      "name": "logs",
-      "provider_name": "registry.terraform.io/hashicorp/azurerm",
-      "change": {
-        "actions": ["create"],
-        "before": null,
-        "after": {
-          "name": "applogsstorage",
-          "resource_group_name": "rg-production",
-          "location": "eastus",
-          "account_tier": "Standard",
-          "account_replication_type": "LRS",
-          "enable_https_traffic_only": false,
-          "min_tls_version": "TLS1_0",
-          "allow_blob_public_access": true,
-          "network_rules": null
-        },
-        "after_unknown": {}
-      }
-    },
-    {
-      "address": "azurerm_storage_account.secure_logs",
-      "mode": "managed",
-      "type": "azurerm_storage_account",
-      "name": "secure_logs",
-      "provider_name": "registry.terraform.io/hashicorp/azurerm",
-      "change": {
-        "actions": ["create"],
-        "before": null,
-        "after": {
-          "name": "securelogsstorage",
-          "resource_group_name": "rg-production",
-          "location": "eastus",
-          "account_tier": "Standard",
-          "account_replication_type": "GRS",
-          "enable_https_traffic_only": true,
-          "min_tls_version": "TLS1_2",
-          "allow_blob_public_access": false,
-          "network_rules": [
-            {
-              "default_action": "Deny",
-              "bypass": ["AzureServices"],
-              "ip_rules": ["10.0.0.0/24"]
-            }
-          ]
-        },
-        "after_unknown": {}
-      }
-    }
-  ],
-  "configuration": {
-    "root_module": {
-      "resources": [
-        {
-          "address": "aws_s3_bucket.data_bucket",
-          "mode": "managed",
-          "type": "aws_s3_bucket",
-          "name": "data_bucket",
-          "provider_config_key": "aws",
-          "expressions": {
-            "bucket": {
-              "constant_value": "my-app-data-bucket"
-            }
-          }
-        },
-        {
-          "address": "azurerm_storage_account.logs",
-          "mode": "managed",
-          "type": "azurerm_storage_account",
-          "name": "logs",
-          "provider_config_key": "azurerm",
-          "expressions": {
-            "name": {
-              "constant_value": "applogsstorage"
-            },
-            "resource_group_name": {
-              "constant_value": "rg-production"
-            },
-            "location": {
-              "constant_value": "eastus"
-            }
-          }
+          "bucket": "my-sensitive-data-bucket"
         }
-      ]
+      }
+    },
+    {
+      "name": "insecure_storage",
+      "type": "azurerm_storage_account",
+      "change": {
+        "actions": ["create"],
+        "after": {
+          "name": "stmulticloudprod01",
+          "enable_https_traffic_only": false
+        }
+      }
     }
-  }
+  ]
 }
