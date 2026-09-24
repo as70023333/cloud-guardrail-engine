@@ -1,0 +1,42 @@
+name: Cloud Guardrail Engine CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    name: Build & Test Policy Engine
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          cache: true
+
+      - name: Install Dependencies
+        working-directory: cloud-guardrail-engine
+        run: go mod download
+
+      - name: Run Go Tests
+        working-directory: cloud-guardrail-engine
+        run: go test -v ./...
+
+      - name: Build Binary
+        working-directory: cloud-guardrail-engine
+        run: go build -v -o bin/cloud-guardrail main.go
+
+      - name: Test Scan on Insecure Mock Plan (Expected Failure Exit Code)
+        working-directory: cloud-guardrail-engine
+        run: |
+          ./bin/cloud-guardrail -plan ./tests/mock_tfplan.json -policies ./policies > scan_output.json || true
+          echo "Scan completed with expected violation output:"
+          cat scan_output.json
+          grep -q '"compliant": false' scan_output.json
