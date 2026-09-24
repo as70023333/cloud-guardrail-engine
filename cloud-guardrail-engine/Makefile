@@ -1,6 +1,6 @@
 # Makefile for Multi-Cloud Guardrail Engine
 
-.PHONY: all build test lint clean run-mock deps
+.PHONY: all build test test-policies lint clean run-mock deps
 
 BINARY_NAME=cloud-guardrail
 POLICIES_DIR=./policies
@@ -20,6 +20,11 @@ build:
 test:
 	@echo "==> Running Go unit tests..."
 	go test -v ./...
+
+test-policies:
+	@echo "==> Running OPA policy unit tests..."
+	@command -v opa >/dev/null 2>&1 || { echo "opa is required but not installed."; exit 1; }
+	opa test $(POLICIES_DIR) -v
 
 lint:
 	@echo "==> Running linters..."

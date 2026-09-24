@@ -25,9 +25,19 @@ jobs:
         working-directory: cloud-guardrail-engine
         run: go mod download
 
+      - name: Install OPA
+        run: |
+          curl -L -o opa https://openpolicyagent.org/downloads/v0.60.0/opa_linux_amd64_static
+          chmod +x opa
+          sudo mv opa /usr/local/bin/
+
       - name: Run Go Tests
         working-directory: cloud-guardrail-engine
         run: go test -v ./...
+
+      - name: Run OPA Policy Tests
+        working-directory: cloud-guardrail-engine
+        run: opa test ./policies -v
 
       - name: Build Binary
         working-directory: cloud-guardrail-engine
