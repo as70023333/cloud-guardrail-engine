@@ -5,7 +5,7 @@
 **Production-Ready OPA-Based Policy Evaluation for Terraform Plans**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Go](https://img.shields.io/badge/Go-1.22+-00ADD8?logo=go&logoColor=white)](https://golang.org)
+[![Go](https://img.shields.io/badge/Go-1.24+-00ADD8?logo=go&logoColor=white)](https://golang.org)
 [![OPA](https://img.shields.io/badge/OPA-Open%20Policy%20Agent-16D1E0)](https://www.openpolicyagent.org)
 [![Terraform](https://img.shields.io/badge/Terraform-Plan%20Validation-7B42BC?logo=terraform&logoColor=white)](https://www.terraform.io)
 [![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?logo=github-actions&logoColor=white)](https://github.com/features/actions)
