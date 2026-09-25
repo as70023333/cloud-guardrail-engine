@@ -15,7 +15,7 @@ Both projects are designed for production deployment with comprehensive testing,
 
 ## 🛡️ Cloud Guardrail Engine
 
-**Location:** [`cloud-guardrail-engine/`](./cloud-guardrail-engine/)
+**Location:** [`cloud-guardrail-engine/`](https://github.com/as70023333/awesome-security-engineer/tree/main/cloud-guardrail-engine)
 
 A Go-based CLI tool that evaluates Terraform plan JSON output against Open Policy Agent (OPA) Rego policies to enforce cloud security guardrails before infrastructure changes are applied.
 
@@ -61,9 +61,9 @@ cloud-guardrail-engine/
 
 ### Documentation
 
-- **[Full Documentation](./cloud-guardrail-engine/)** - Complete project details
-- **[CI/CD Pipeline](./.github/workflows/ci.yml)** - GitHub Actions workflow
-- **[Policy Examples](./cloud-guardrail-engine/policies/)** - OPA Rego policies
+- **[Full Documentation](https://github.com/as70023333/awesome-security-engineer/tree/main/cloud-guardrail-engine)** - Complete project details
+- **[CI/CD Pipeline](https://github.com/as70023333/awesome-security-engineer/blob/main/.github/workflows/ci.yml)** - GitHub Actions workflow
+- **[Policy Examples](https://github.com/as70023333/awesome-security-engineer/tree/main/cloud-guardrail-engine/policies)** - OPA Rego policies
 
 ### Expected Output
 
@@ -81,7 +81,7 @@ cloud-guardrail-engine/
 
 ## 🔐 Zero-Trust Quarantine Engine
 
-**Location:** [`zero-trust-quarantine/`](./zero-trust-quarantine/)
+**Location:** [`zero-trust-quarantine/`](https://github.com/as70023333/awesome-security-engineer/tree/main/zero-trust-quarantine)
 
 A production-ready FastAPI-based event-driven API daemon that listens for high-risk identity alerts and immediately triggers cross-cloud identity quarantine by invalidating active sessions in AWS and Azure.
 
@@ -138,10 +138,10 @@ zero-trust-quarantine/
 
 ### Documentation
 
-- **[Full Documentation](./zero-trust-quarantine/README.md)** - Complete project details
-- **[Kubernetes Deployment Guide](./zero-trust-quarantine/k8s/README.md)** - K8s orchestration
-- **[Docker Configuration](./zero-trust-quarantine/Dockerfile)** - Container setup
-- **[API Documentation](./zero-trust-quarantine/main.py)** - FastAPI endpoints
+- **[Full Documentation](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/README.md)** - Complete project details
+- **[Kubernetes Deployment Guide](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/k8s/README.md)** - K8s orchestration
+- **[Docker Configuration](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/Dockerfile)** - Container setup
+- **[API Documentation](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/main.py)** - FastAPI endpoints
 
 ### Architecture
 
@@ -216,25 +216,25 @@ cd zero-trust-quarantine     # For identity quarantine engine
 
 | Document | Description |
 |----------|-------------|
-| [Project README](./cloud-guardrail-engine/) | Main project documentation |
-| [OPA Policies](./cloud-guardrail-engine/policies/) | Rego policy files |
-| [AWS S3 Policy](./cloud-guardrail-engine/policies/aws_s3_encryption.rego) | AWS S3 encryption enforcement |
-| [Azure Storage Policy](./cloud-guardrail-engine/policies/azure_storage_https.rego) | Azure HTTPS enforcement |
-| [CI/CD Pipeline](./.github/workflows/ci.yml) | GitHub Actions workflow |
-| [Test Fixtures](./cloud-guardrail-engine/tests/mock_tfplan.json) | Mock Terraform plan |
+| [Project README](https://github.com/as70023333/awesome-security-engineer/tree/main/cloud-guardrail-engine) | Main project documentation |
+| [OPA Policies](https://github.com/as70023333/awesome-security-engineer/tree/main/cloud-guardrail-engine/policies) | Rego policy files |
+| [AWS S3 Policy](https://github.com/as70023333/awesome-security-engineer/blob/main/cloud-guardrail-engine/policies/aws_s3_encryption.rego) | AWS S3 encryption enforcement |
+| [Azure Storage Policy](https://github.com/as70023333/awesome-security-engineer/blob/main/cloud-guardrail-engine/policies/azure_storage_https.rego) | Azure HTTPS enforcement |
+| [CI/CD Pipeline](https://github.com/as70023333/awesome-security-engineer/blob/main/.github/workflows/ci.yml) | GitHub Actions workflow |
+| [Test Fixtures](https://github.com/as70023333/awesome-security-engineer/blob/main/cloud-guardrail-engine/tests/mock_tfplan.json) | Mock Terraform plan |
 
 ### Zero-Trust Quarantine Engine
 
 | Document | Description |
 |----------|-------------|
-| [Project README](./zero-trust-quarantine/README.md) | Main project documentation |
-| [Kubernetes Guide](./zero-trust-quarantine/k8s/README.md) | K8s deployment instructions |
-| [K8s Manifests](./zero-trust-quarantine/k8s/deployment.yaml) | Complete K8s resources |
-| [Dockerfile](./zero-trust-quarantine/Dockerfile) | Container configuration |
-| [AWS Provider](./zero-trust-quarantine/providers/aws_quarantine.py) | AWS STS revocation |
-| [Azure Provider](./zero-trust-quarantine/providers/azure_quarantine.py) | Azure Entra ID revocation |
-| [API Implementation](./zero-trust-quarantine/main.py) | FastAPI endpoints |
-| [Test Payloads](./zero-trust-quarantine/tests/test_payloads.py) | Webhook test fixtures |
+| [Project README](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/README.md) | Main project documentation |
+| [Kubernetes Guide](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/k8s/README.md) | K8s deployment instructions |
+| [K8s Manifests](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/k8s/deployment.yaml) | Complete K8s resources |
+| [Dockerfile](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/Dockerfile) | Container configuration |
+| [AWS Provider](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/providers/aws_quarantine.py) | AWS STS revocation |
+| [Azure Provider](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/providers/azure_quarantine.py) | Azure Entra ID revocation |
+| [API Implementation](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/main.py) | FastAPI endpoints |
+| [Test Payloads](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/tests/test_payloads.py) | Webhook test fixtures |
 
 ---
 
@@ -433,7 +433,7 @@ kubectl apply -f k8s/deployment.yaml
 kubectl get pods -n security -l app=zero-trust-quarantine
 ```
 
-See [Kubernetes Deployment Guide](./zero-trust-quarantine/k8s/README.md) for complete instructions.
+See [Kubernetes Deployment Guide](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/k8s/README.md) for complete instructions.
 
 ---
 
