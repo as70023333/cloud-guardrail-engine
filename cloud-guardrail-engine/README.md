@@ -279,17 +279,17 @@ test_deny_<scenario> {
 
 ## 📖 Documentation
 
-- [Main Repository README](../README.md)
+- [Main Repository README](https://github.com/as70023333/awesome-security-engineer/blob/main/README.md)
 - [OPA Documentation](https://www.openpolicyagent.org/docs/latest/)
 - [Terraform Plan JSON Format](https://developer.hashicorp.com/terraform/internals/json-format)
 
 ## 🤝 Contributing
 
-See the [main repository CONTRIBUTING.md](../CONTRIBUTING.md) for guidelines.
+See the [main repository CONTRIBUTING.md](https://github.com/as70023333/awesome-security-engineer/blob/main/CONTRIBUTING.md) for guidelines.
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/as70023333/awesome-security-engineer/blob/main/LICENSE) file for details.
 
 ## 🆘 Support
 
