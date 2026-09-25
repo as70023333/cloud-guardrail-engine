@@ -35,8 +35,8 @@ cloud-guardrail-engine/
 
 ```bash
 # Clone the repository
-git clone https://github.com/as70023333/awesome-security-engineer.git
-cd awesome-security-engineer/cloud-guardrail-engine
+git clone https://github.com/as70023333/cloud-guardrail-engine.git
+cd cloud-guardrail-engine
 
 # Install dependencies
 make deps
@@ -279,23 +279,23 @@ test_deny_<scenario> {
 
 ## 📖 Documentation
 
-- [Main Repository README](https://github.com/as70023333/awesome-security-engineer/blob/main/README.md)
+- [Main Repository README](https://github.com/as70023333/cloud-guardrail-engine/blob/main/README.md)
 - [OPA Documentation](https://www.openpolicyagent.org/docs/latest/)
 - [Terraform Plan JSON Format](https://developer.hashicorp.com/terraform/internals/json-format)
 
 ## 🤝 Contributing
 
-See the [main repository CONTRIBUTING.md](https://github.com/as70023333/awesome-security-engineer/blob/main/CONTRIBUTING.md) for guidelines.
+See the [main repository CONTRIBUTING.md](https://github.com/as70023333/cloud-guardrail-engine/blob/main/CONTRIBUTING.md) for guidelines.
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/as70023333/awesome-security-engineer/blob/main/LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/as70023333/cloud-guardrail-engine/blob/main/LICENSE) file for details.
 
 ## 🆘 Support
 
 For issues and questions:
-- [GitHub Issues](https://github.com/as70023333/awesome-security-engineer/issues)
-- [GitHub Discussions](https://github.com/as70023333/awesome-security-engineer/discussions)
+- [GitHub Issues](https://github.com/as70023333/cloud-guardrail-engine/issues)
+- [GitHub Discussions](https://github.com/as70023333/cloud-guardrail-engine/discussions)
 
 ---
 
