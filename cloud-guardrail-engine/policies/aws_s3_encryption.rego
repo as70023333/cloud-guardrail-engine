@@ -1,11 +1,13 @@
 package cloud.guardrail.aws
 
+import future.keywords.if
 import future.keywords.in
+import future.keywords.contains
 
 default allow = false
 
 # Find all aws_s3_bucket resource changes in terraform plan
-deny[reason] {
+deny contains reason if {
     resource := input.resource_changes[_]
     resource.type == "aws_s3_bucket"
     
@@ -19,6 +21,6 @@ deny[reason] {
     reason := sprintf("AWS S3 bucket '%v' must have server-side encryption enabled.", [resource.name])
 }
 
-allow {
+allow if {
     count(deny) == 0
 }
