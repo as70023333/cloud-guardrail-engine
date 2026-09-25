@@ -40,7 +40,9 @@ jobs:
 
       - name: Install Dependencies
         working-directory: cloud-guardrail-engine
-        run: go mod download
+        run: |
+          go mod tidy
+          go mod download
 
       - name: Build Engine Binary
         working-directory: cloud-guardrail-engine
