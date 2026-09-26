@@ -1,21 +1,52 @@
-# Awesome Security Engineer
+# Cloud Guardrail Engine
 
-A comprehensive collection of production-ready security engineering tools and frameworks for multi-cloud environments. This repository contains enterprise-grade implementations for cloud security guardrails and zero-trust identity quarantine systems.
+<div align="center">
 
-## 📚 Overview
+**Production-Ready OPA-Based Policy Evaluation for Terraform Plans**
 
-This repository showcases two critical security engineering projects:
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Go](https://img.shields.io/badge/Go-1.24+-00ADD8?logo=go&logoColor=white)](https://golang.org)
+[![OPA](https://img.shields.io/badge/OPA-Open%20Policy%20Agent-16D1E0)](https://www.openpolicyagent.org)
+[![Terraform](https://img.shields.io/badge/Terraform-Plan%20Validation-7B42BC?logo=terraform&logoColor=white)](https://www.terraform.io)
+[![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?logo=github-actions&logoColor=white)](https://github.com/features/actions)
 
-1. **[Cloud Guardrail Engine](#cloud-guardrail-engine)** - OPA-based policy evaluation for Terraform plans
-2. **[Zero-Trust Quarantine Engine](#zero-trust-quarantine-engine)** - Event-driven cross-cloud identity session revocation
+</div>
 
-Both projects are designed for production deployment with comprehensive testing, CI/CD pipelines, and Kubernetes orchestration.
+---
+
+## 🎯 The Problem We Solve
+
+**Security breaches cost an average of $4.45M per incident.** In multi-cloud environments, infrastructure misconfigurations are a leading cause of security incidents.
+
+**The challenge**: How do you catch security violations *before* infrastructure is deployed?
+
+This repository provides a **production-ready, enterprise-grade solution** that evaluates Terraform plans against OPA Rego policies, enforcing security standards before changes reach production.
+
+---
+
+## 💼 Business Impact
+
+### For Security Teams
+- **Reduce MTTR**: Cut mean-time-to-remediation from hours to seconds
+- **Shift-Left Security**: Catch violations before deployment, not after
+- **Unified Posture**: Consistent security policies across AWS and Azure
+- **Audit Ready**: Comprehensive logging and compliance reporting
+
+### For Engineering Teams
+- **Developer Velocity**: Fast feedback loops with CI/CD integration
+- **Policy as Code**: Version-controlled, tested, and reviewed security policies
+- **Self-Service**: Engineers can validate their own infrastructure changes
+- **Clear Ownership**: Explicit policy violations with actionable remediation steps
+
+### For Business Leaders
+- **Risk Reduction**: Automated enforcement reduces human error
+- **Cost Savings**: Prevent costly security breaches and compliance violations
+- **Scalability**: Solutions that grow with your organization
+- **Competitive Advantage**: Demonstrate mature security practices to customers
 
 ---
 
 ## 🛡️ Cloud Guardrail Engine
-
-**Location:** [`cloud-guardrail-engine/`](./cloud-guardrail-engine/)
 
 A Go-based CLI tool that evaluates Terraform plan JSON output against Open Policy Agent (OPA) Rego policies to enforce cloud security guardrails before infrastructure changes are applied.
 
@@ -30,9 +61,6 @@ A Go-based CLI tool that evaluates Terraform plan JSON output against Open Polic
 ### Quick Start
 
 ```bash
-# Navigate to the project directory
-cd cloud-guardrail-engine
-
 # Build the binary
 make build
 
@@ -46,7 +74,7 @@ make test-policies
 ### Project Structure
 
 ```
-cloud-guardrail-engine/
+.
 ├── main.go                                    # CLI entrypoint
 ├── go.mod                                     # Go module definition
 ├── Makefile                                   # Build automation
@@ -61,9 +89,9 @@ cloud-guardrail-engine/
 
 ### Documentation
 
-- **[Full Documentation](./cloud-guardrail-engine/)** - Complete project details
-- **[CI/CD Pipeline](./.github/workflows/ci.yml)** - GitHub Actions workflow
-- **[Policy Examples](./cloud-guardrail-engine/policies/)** - OPA Rego policies
+- **[Full Documentation](https://github.com/as70023333/cloud-guardrail-engine)** - Complete project details
+- **[CI/CD Pipeline](https://github.com/as70023333/cloud-guardrail-engine/blob/main/.github/workflows/ci.yml)** - GitHub Actions workflow
+- **[Policy Examples](https://github.com/as70023333/cloud-guardrail-engine/tree/main/policies)** - OPA Rego policies
 
 ### Expected Output
 
@@ -81,7 +109,7 @@ cloud-guardrail-engine/
 
 ## 🔐 Zero-Trust Quarantine Engine
 
-**Location:** [`zero-trust-quarantine/`](./zero-trust-quarantine/)
+**Location:** [`zero-trust-quarantine/`](https://github.com/as70023333/awesome-security-engineer/tree/main/zero-trust-quarantine)
 
 A production-ready FastAPI-based event-driven API daemon that listens for high-risk identity alerts and immediately triggers cross-cloud identity quarantine by invalidating active sessions in AWS and Azure.
 
@@ -138,10 +166,10 @@ zero-trust-quarantine/
 
 ### Documentation
 
-- **[Full Documentation](./zero-trust-quarantine/README.md)** - Complete project details
-- **[Kubernetes Deployment Guide](./zero-trust-quarantine/k8s/README.md)** - K8s orchestration
-- **[Docker Configuration](./zero-trust-quarantine/Dockerfile)** - Container setup
-- **[API Documentation](./zero-trust-quarantine/main.py)** - FastAPI endpoints
+- **[Full Documentation](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/README.md)** - Complete project details
+- **[Kubernetes Deployment Guide](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/k8s/README.md)** - K8s orchestration
+- **[Docker Configuration](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/Dockerfile)** - Container setup
+- **[API Documentation](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/main.py)** - FastAPI endpoints
 
 ### Architecture
 
@@ -179,6 +207,14 @@ zero-trust-quarantine/
 
 ---
 
+## 🌐 Live Demo
+
+**Interactive Portfolio**: [View the Live Demo](https://as70023333.github.io/cloud-guardrail-engine/)
+
+Explore the architecture, features, and capabilities of both security engines through our interactive web interface.
+
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -199,8 +235,8 @@ zero-trust-quarantine/
 
 ```bash
 # Clone the repository
-git clone https://github.com/as70023333/awesome-security-engineer.git
-cd awesome-security-engineer
+git clone https://github.com/as70023333/cloud-guardrail-engine.git
+cd cloud-guardrail-engine
 
 # Choose your project
 cd cloud-guardrail-engine    # For OPA policy engine
@@ -216,25 +252,25 @@ cd zero-trust-quarantine     # For identity quarantine engine
 
 | Document | Description |
 |----------|-------------|
-| [Project README](./cloud-guardrail-engine/) | Main project documentation |
-| [OPA Policies](./cloud-guardrail-engine/policies/) | Rego policy files |
-| [AWS S3 Policy](./cloud-guardrail-engine/policies/aws_s3_encryption.rego) | AWS S3 encryption enforcement |
-| [Azure Storage Policy](./cloud-guardrail-engine/policies/azure_storage_https.rego) | Azure HTTPS enforcement |
-| [CI/CD Pipeline](./.github/workflows/ci.yml) | GitHub Actions workflow |
-| [Test Fixtures](./cloud-guardrail-engine/tests/mock_tfplan.json) | Mock Terraform plan |
+| [Project README](https://github.com/as70023333/cloud-guardrail-engine) | Main project documentation |
+| [OPA Policies](https://github.com/as70023333/cloud-guardrail-engine/tree/main/policies) | Rego policy files |
+| [AWS S3 Policy](https://github.com/as70023333/cloud-guardrail-engine/blob/main/policies/aws_s3_encryption.rego) | AWS S3 encryption enforcement |
+| [Azure Storage Policy](https://github.com/as70023333/cloud-guardrail-engine/blob/main/policies/azure_storage_https.rego) | Azure HTTPS enforcement |
+| [CI/CD Pipeline](https://github.com/as70023333/cloud-guardrail-engine/blob/main/.github/workflows/ci.yml) | GitHub Actions workflow |
+| [Test Fixtures](https://github.com/as70023333/cloud-guardrail-engine/blob/main/tests/mock_tfplan.json) | Mock Terraform plan |
 
 ### Zero-Trust Quarantine Engine
 
 | Document | Description |
 |----------|-------------|
-| [Project README](./zero-trust-quarantine/README.md) | Main project documentation |
-| [Kubernetes Guide](./zero-trust-quarantine/k8s/README.md) | K8s deployment instructions |
-| [K8s Manifests](./zero-trust-quarantine/k8s/deployment.yaml) | Complete K8s resources |
-| [Dockerfile](./zero-trust-quarantine/Dockerfile) | Container configuration |
-| [AWS Provider](./zero-trust-quarantine/providers/aws_quarantine.py) | AWS STS revocation |
-| [Azure Provider](./zero-trust-quarantine/providers/azure_quarantine.py) | Azure Entra ID revocation |
-| [API Implementation](./zero-trust-quarantine/main.py) | FastAPI endpoints |
-| [Test Payloads](./zero-trust-quarantine/tests/test_payloads.py) | Webhook test fixtures |
+| [Project README](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/README.md) | Main project documentation |
+| [Kubernetes Guide](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/k8s/README.md) | K8s deployment instructions |
+| [K8s Manifests](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/k8s/deployment.yaml) | Complete K8s resources |
+| [Dockerfile](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/Dockerfile) | Container configuration |
+| [AWS Provider](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/providers/aws_quarantine.py) | AWS STS revocation |
+| [Azure Provider](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/providers/azure_quarantine.py) | Azure Entra ID revocation |
+| [API Implementation](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/main.py) | FastAPI endpoints |
+| [Test Payloads](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/tests/test_payloads.py) | Webhook test fixtures |
 
 ---
 
@@ -433,7 +469,7 @@ kubectl apply -f k8s/deployment.yaml
 kubectl get pods -n security -l app=zero-trust-quarantine
 ```
 
-See [Kubernetes Deployment Guide](./zero-trust-quarantine/k8s/README.md) for complete instructions.
+See [Kubernetes Deployment Guide](https://github.com/as70023333/awesome-security-engineer/blob/main/zero-trust-quarantine/k8s/README.md) for complete instructions.
 
 ---
 
@@ -466,8 +502,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For issues, questions, or contributions:
 
-- **Issues**: [GitHub Issues](https://github.com/as70023333/awesome-security-engineer/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/as70023333/awesome-security-engineer/discussions)
+- **Issues**: [GitHub Issues](https://github.com/as70023333/cloud-guardrail-engine/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/as70023333/cloud-guardrail-engine/discussions)
 - **Email**: security-team@company.com
 
 ---
@@ -528,11 +564,11 @@ For issues, questions, or contributions:
 
 ## 📈 Stats
 
-![GitHub stars](https://img.shields.io/github/stars/as70023333/awesome-security-engineer?style=social)
-![GitHub forks](https://img.shields.io/github/forks/as70023333/awesome-security-engineer?style=social)
-![GitHub issues](https://img.shields.io/github/issues/as70023333/awesome-security-engineer)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/as70023333/awesome-security-engineer)
-![GitHub license](https://img.shields.io/github/license/as70023333/awesome-security-engineer)
+![GitHub stars](https://img.shields.io/github/stars/as70023333/cloud-guardrail-engine?style=social)
+![GitHub forks](https://img.shields.io/github/forks/as70023333/cloud-guardrail-engine?style=social)
+![GitHub issues](https://img.shields.io/github/issues/as70023333/cloud-guardrail-engine)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/as70023333/cloud-guardrail-engine)
+![GitHub license](https://img.shields.io/github/license/as70023333/cloud-guardrail-engine)
 
 ---
 

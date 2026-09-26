@@ -1,10 +1,11 @@
 package cloud.guardrail.azure_test
 
+import future.keywords.if
 import future.keywords.in
 import data.cloud.guardrail.azure
 
 # Test Case 1: Storage account without HTTPS enforced MUST trigger a violation
-test_deny_http_azure_storage {
+test_deny_http_azure_storage if {
     mock_plan := {
         "resource_changes": [{
             "name": "insecure_storage",
@@ -24,7 +25,7 @@ test_deny_http_azure_storage {
 }
 
 # Test Case 2: Storage account enforcing HTTPS MUST pass
-test_allow_https_azure_storage {
+test_allow_https_azure_storage if {
     mock_plan := {
         "resource_changes": [{
             "name": "secure_storage",

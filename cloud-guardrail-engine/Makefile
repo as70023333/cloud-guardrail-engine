@@ -10,8 +10,8 @@ all: lint test build
 
 deps:
 	@echo "==> Downloading Go dependencies..."
-	go mod download
 	go mod tidy
+	go mod download
 
 build:
 	@echo "==> Building binary..."

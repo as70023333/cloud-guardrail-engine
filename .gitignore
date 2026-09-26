@@ -41,7 +41,7 @@ coverage.html
 logs/
 
 # Docker
-.dockerignore
+.docker/
 
 # Kubernetes
 *.kubeconfig
@@ -72,3 +72,13 @@ service-account.json
 # OS
 Thumbs.db
 .next/
+
+# Web editor / sandbox files (not part of security projects)
+package.json
+package-lock.json
+tsconfig.json
+vite.config.js
+index.html
+src/
+node_modules/
+dist/
