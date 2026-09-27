@@ -1,10 +1,11 @@
 package cloud.guardrail.aws_test
 
+import future.keywords.if
 import future.keywords.in
 import data.cloud.guardrail.aws
 
 # Test Case 1: Unencrypted bucket MUST trigger a deny violation
-test_deny_unencrypted_s3_bucket {
+test_deny_unencrypted_s3_bucket if {
     mock_plan := {
         "resource_changes": [{
             "name": "unencrypted_bucket",
@@ -21,7 +22,7 @@ test_deny_unencrypted_s3_bucket {
 }
 
 # Test Case 2: Encrypted bucket MUST pass validation (no deny violations)
-test_allow_encrypted_s3_bucket {
+test_allow_encrypted_s3_bucket if {
     mock_plan := {
         "resource_changes": [{
             "name": "encrypted_bucket",

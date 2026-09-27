@@ -1,11 +1,13 @@
 package cloud.guardrail.azure
 
+import future.keywords.if
 import future.keywords.in
+import future.keywords.contains
 
 default allow = false
 
 # Find all azurerm_storage_account resource changes in terraform plan
-deny[reason] {
+deny contains reason if {
     resource := input.resource_changes[_]
     resource.type == "azurerm_storage_account"
     
@@ -19,7 +21,7 @@ deny[reason] {
     reason := sprintf("Azure Storage Account '%v' must enforce HTTPS traffic only.", [resource.name])
 }
 
-deny[reason] {
+deny contains reason if {
     resource := input.resource_changes[_]
     resource.type == "azurerm_storage_account"
     
@@ -32,6 +34,6 @@ deny[reason] {
     reason := sprintf("Azure Storage account '%v' must use minimum TLS version TLS1_2.", [resource.name])
 }
 
-allow {
+allow if {
     count(deny) == 0
 }
