@@ -494,7 +494,7 @@ Contributions are welcome! Please follow these guidelines:
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
 
 ---
 
@@ -504,7 +504,7 @@ For issues, questions, or contributions:
 
 - **Issues**: [GitHub Issues](https://github.com/as70023333/cloud-guardrail-engine/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/as70023333/cloud-guardrail-engine/discussions)
-- **Email**: security-team@company.com
+
 
 ---
 
